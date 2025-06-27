@@ -69,7 +69,7 @@ const AllAdmin = () => {
           headers: {
             "Content-Type": "application/json",
             // Add authorization header - you'll need to get the token from your auth system
-             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             // const token = localStorage.getItem("authToken");
           },
         }
