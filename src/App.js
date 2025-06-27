@@ -52,12 +52,15 @@ import ManageProducts from "./pages/Admin/ManageProducts";
 //import ManageOrders from "./pages/Admin/ManageOrders";
 import ManageReviews from "./pages/Admin/ManageReviews";
 import ManageSellers from "./pages/Admin/ManageSellers";
-//import SellersReports from "./pages/Admin/SellersReports";
+import SellersReports from "./pages/Admin/SellersReports";
 import Notifications from "./pages/Seller/Notifications";
 import UpdateProduct from "./pages/Seller/UpdateProduct";
 import  ManageOrders from"./pages/Admin/ManageOrders"
 import  MyDiscount from"./pages/Seller/My Discount"
-//import AdminMessages from "./pages/Admin/AdminMessages";
+import AdminMessages from "./pages/Admin/AdminMessages";
+import AddNewAdmin from "./pages/Admin/AddNewAdmin";
+import StoreUpdateRequests from"./pages/Admin/StoreUpdateRequests";
+import AllAdmin from"./pages/Admin/AllAdmin";
 function App() {
   const { i18n } = useTranslation();
 
@@ -143,13 +146,24 @@ function App() {
               />
 
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin/alladmin" element={<AllAdmin/>} />
 
               <Route path="/admin/products" element={<ManageProducts />} />
               <Route path="/admin/orders" element={<ManageOrders />} />
               <Route path="/admin/reviews" element={<ManageReviews />} />
               <Route path="/admin/sellers" element={<ManageSellers />} />
               <Route path="/update-product/:id" element={<UpdateProduct />} />
-              <Route path="/seller-myDiscount"element={<MyDiscount/>}/>
+              <Route path="/seller-myDiscount" element={<MyDiscount />} />
+              <Route
+                path="/admin/sellers-reports"
+                element={<SellersReports />}
+              />
+              <Route path="admin/messages" element={<AdminMessages />} />
+              <Route
+                path="/admin/store-requests"
+                element={<StoreUpdateRequests />}
+              />
+              <Route path="/admin/add-admin" element={<AddNewAdmin />} />
             </Routes>
           </div>
           <Footer />

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 
 const dummyReviews = [
   {
@@ -124,36 +116,6 @@ const ManageReviews = () => {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Line Chart */}
-      <div className="mt-12">
-        <h3 className="text-xl font-semibold text-[#7a0d0d] mb-4">
-          Review Ratings Overview
-        </h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={reviews.map((r) => ({
-              reviewer: r.reviewer,
-              rating: r.rating,
-            }))}
-            margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
-          >
-            <XAxis dataKey="reviewer" />
-            <YAxis domain={[0, 5]} />
-            <Tooltip />
-            <Line
-              type="natural"
-              dataKey="rating"
-              stroke="#b30000"
-              strokeWidth={2}
-              dot={{ r: 4 }}
-              activeDot={{ r: 6 }}
-              isAnimationActive={true}
-              animationDuration={1500}
-            />
-          </LineChart>
-        </ResponsiveContainer>
       </div>
 
       {/* Modal */}

@@ -5,74 +5,84 @@ import "react-toastify/dist/ReactToastify.css";
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("Pending"); // ✅ الديفولت Pending
+  const [filterStatus, setFilterStatus] = useState("Unblocked");
 
-  // Load products on mount
   useEffect(() => {
     const savedProducts = localStorage.getItem("products");
     if (savedProducts) {
       const parsedProducts = JSON.parse(savedProducts);
-
-      // تأكد ان كل برودكت عنده status مبدأي لو مفيش
       const updatedProducts = parsedProducts.map((product) => ({
         ...product,
-        status: product.status ? product.status : "Pending",
+        status: product.status ? product.status : "Unblocked",
       }));
-
       setProducts(updatedProducts);
     }
   }, []);
 
-  const handleApprove = (productId) => {
+  const handleBlock = (productId) => {
     const updatedProducts = products.map((product) =>
-      product.id === productId ? { ...product, status: "Approved" } : product
+      product.id === productId ? { ...product, status: "Blocked" } : product
     );
     setProducts(updatedProducts);
     localStorage.setItem("products", JSON.stringify(updatedProducts));
-    toast.success("Product approved successfully", {
-  autoClose: 2000,
-  hideProgressBar: true,
-  closeOnClick: true,
-  icon: false,
-  style: {
-    color: "#7a0d0d",
-    fontWeight: "bold",
-    textAlign: "center",
-    whiteSpace: "nowrap",
-  },
-});
-
-    
+    toast.info("Product has been blocked", {
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      icon: false,
+      closeButton: false,
+      style: {
+        color: "#7a0d0d",
+        fontWeight: "bold",
+        textAlign: "center",
+      },
+    });
   };
 
-  const handleReject = (productId) => {
+  const handleUnblock = (productId) => {
     const updatedProducts = products.map((product) =>
-      product.id === productId ? { ...product, status: "Rejected" } : product
+      product.id === productId ? { ...product, status: "Unblocked" } : product
     );
     setProducts(updatedProducts);
     localStorage.setItem("products", JSON.stringify(updatedProducts));
-    toast.success("Product rejected. Notification sent to seller", {
-  autoClose: 2000,
-  hideProgressBar: true,
-  closeOnClick: true,
-  icon: false,
-  style: {
-    color: "#7a0d0d",
-    fontWeight: "bold",
-    textAlign: "center",
-    whiteSpace: "nowrap",
-    maxWidth: "100%",
-    width: "fit-content",
-    margin: "auto",
-    padding: "0.5rem 1rem",
-  },
-});
-
+    toast.success("Product has been unblocked", {
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      icon: false,
+      closeButton: false,
+      style: {
+        color: "#7a0d0d",
+        fontWeight: "bold",
+        textAlign: "center",
+      },
+    });
   };
 
-  // فلترة المنتجات حسب الستاتس و حسب البحث
+  const handleDelete = (productId) => {
+    const updatedProducts = products.filter(
+      (product) => product.id !== productId
+    );
+    setProducts(updatedProducts);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+    toast.error("Product deleted", {
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      icon: false,
+      closeButton: false,
+      style: {
+        color: "#7a0d0d",
+        fontWeight: "bold",
+        textAlign: "center",
+      },
+    });
+  };
+
   const filteredProducts = products.filter((product) => {
-    const productStatus = (product.status || "Pending").trim().toLowerCase();
+    const productStatus = (product.status || "Unblocked")
+      .trim()
+      .toLowerCase();
     const selectedFilter = filterStatus.trim().toLowerCase();
 
     const matchesStatus =
@@ -93,28 +103,25 @@ const ManageProducts = () => {
 
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4 mb-6 bg-gray-100 p-4 rounded">
-      <input
-  type="text"
-  placeholder="Search by product"
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}
-  className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/3 
+        <input
+          type="text"
+          placeholder="Search by product"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/3 
              focus:outline-none focus:ring-0 focus:ring-offset-0 
              focus:border-[#7a0d0d] focus:shadow-none appearance-none"
-  style={{ boxShadow: 'none' }}
-/>
+          style={{ boxShadow: "none" }}
+        />
 
-
-<select
-  value={filterStatus}
-  onChange={(e) => setFilterStatus(e.target.value)}
-  className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-[#7a0d0d] focus:border-[#7a0d0d]"
->
-
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-[#7a0d0d] focus:border-[#7a0d0d]"
+        >
           <option value="All">All</option>
-          <option value="Approved">Approved</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Pending">Pending</option>
+          <option value="Unblocked">Unblocked</option>
+          <option value="Blocked">Blocked</option>
         </select>
       </div>
 
@@ -166,18 +173,28 @@ const ManageProducts = () => {
                   {product.status}
                 </td>
                 <td className="px-4 py-3 border align-middle space-x-2">
-                  <button
-                    onClick={() => handleApprove(product.id)}
-                    className="bg-[#7a0d0d] text-white text-sm px-2 py-1 rounded-full hover:bg-red-800"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleReject(product.id)}
-                    className="bg-[#7a0d0d] text-white text-sm px-2 py-1 rounded-full hover:bg-red-800"
-                  >
-                    Reject
-                  </button>
+                 {product.status === "Blocked" ? (
+  <button
+    onClick={() => handleUnblock(product.id)}
+    className="bg-[#7a0d0d] text-white text-sm px-3 py-1 rounded-full hover:bg-red-900"
+  >
+    Unblock
+  </button>
+) : (
+  <button
+    onClick={() => handleBlock(product.id)}
+    className="bg-[#7a0d0d] text-white text-sm px-3 py-1 rounded-full hover:bg-red-900"
+  >
+    Block
+  </button>
+)}
+<button
+  onClick={() => handleDelete(product.id)}
+  className="bg-[#7a0d0d] text-white text-sm px-3 py-1 rounded-full hover:bg-red-900"
+>
+  Delete
+</button>
+
                 </td>
               </tr>
             ))}
