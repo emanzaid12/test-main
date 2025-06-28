@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import Select from "react-select";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { FaGift } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 import {
   FaUser,
@@ -253,7 +255,6 @@ const Settings = () => {
     confirm: "",
     general: "",
   });
-  
 
   // Order states
   const [orders, setOrders] = useState([]);
@@ -311,7 +312,7 @@ const Settings = () => {
 
     // إعادة توجيه للصفحة الرئيسية أو صفحة تسجيل الدخول
     navigate("/");
-    window.location.reload();// أو navigate("/") حسب التطبيق
+    window.location.reload(); // أو navigate("/") حسب التطبيق
 
     // يمكن إضافة رسالة تأكيد (اختياري)
     // alert("تم تسجيل الخروج بنجاح");
@@ -326,110 +327,110 @@ const Settings = () => {
       alert("معرف الطلب مفقود");
     }
   };
- const fetchNotifications = async () => {
-   setNotificationsLoading(true);
-   setNotificationsError(null);
-   try {
-     const token = localStorage.getItem("authToken");
-     const response = await fetch(
-       "https://shopyapi.runasp.net/api/Notification",
-       {
-         method: "GET",
-         headers: {
-           Authorization: `Bearer ${token}`,
-           "Content-Type": "application/json",
-         },
-       }
-     );
+  const fetchNotifications = async () => {
+    setNotificationsLoading(true);
+    setNotificationsError(null);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        "https://shopyapi.runasp.net/api/Notification",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-     if (!response.ok) {
-       throw new Error("Failed to fetch notifications");
-     }
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
 
-     const data = await response.json();
-     setNotifications(data);
-   } catch (err) {
-     setNotificationsError(err.message);
-   } finally {
-     setNotificationsLoading(false);
-   }
- };
+      const data = await response.json();
+      setNotifications(data);
+    } catch (err) {
+      setNotificationsError(err.message);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
 
- // جلب عدد الإشعارات غير المقروءة
- const fetchUnreadCount = async () => {
-   try {
-     const token = localStorage.getItem("authToken");
-     const response = await fetch(
-       "https://shopyapi.runasp.net/api/Notification/unread/count",
-       {
-         method: "GET",
-         headers: {
-           Authorization: `Bearer ${token}`,
-           "Content-Type": "application/json",
-         },
-       }
-     );
+  // جلب عدد الإشعارات غير المقروءة
+  const fetchUnreadCount = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        "https://shopyapi.runasp.net/api/Notification/unread/count",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-     if (!response.ok) {
-       throw new Error("Failed to fetch unread count");
-     }
+      if (!response.ok) {
+        throw new Error("Failed to fetch unread count");
+      }
 
-     const count = await response.json();
-     setUnreadCount(count);
-   } catch (err) {
-     console.error("Error fetching unread count:", err);
-   }
- };
+      const count = await response.json();
+      setUnreadCount(count);
+    } catch (err) {
+      console.error("Error fetching unread count:", err);
+    }
+  };
 
- // تعليم الإشعار كمقروء
- const markAsRead = async (notificationId) => {
-   try {
-     const token = localStorage.getItem("authToken");
-     const response = await fetch(
-       `https://shopyapi.runasp.net/api/Notification/${notificationId}/read`,
-       {
-         method: "POST",
-         headers: {
-           Authorization: `Bearer ${token}`,
-           "Content-Type": "application/json",
-         },
-       }
-     );
+  // تعليم الإشعار كمقروء
+  const markAsRead = async (notificationId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        `https://shopyapi.runasp.net/api/Notification/${notificationId}/read`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-     if (!response.ok) {
-       throw new Error("Failed to mark notification as read");
-     }
+      if (!response.ok) {
+        throw new Error("Failed to mark notification as read");
+      }
 
-     // تحديث الإشعارات محلياً
-     setNotifications((prev) =>
-       prev.map((notification) =>
-         notification.id === notificationId
-           ? { ...notification, isRead: true }
-           : notification
-       )
-     );
+      // تحديث الإشعارات محلياً
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
 
-     // تحديث العداد
-     setUnreadCount((prev) => Math.max(0, prev - 1));
-   } catch (err) {
-     console.error("Error marking notification as read:", err);
-   }
- };
+      // تحديث العداد
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
+  };
 
- // إضافة useEffect لجلب عدد الإشعارات غير المقروءة عند تحميل الكومبوننت
- useEffect(() => {
-   fetchUnreadCount();
-   // يمكنك إضافة interval لتحديث العدد كل فترة
-   const interval = setInterval(fetchUnreadCount, 30000); // كل 30 ثانية
-   return () => clearInterval(interval);
- }, []);
+  // إضافة useEffect لجلب عدد الإشعارات غير المقروءة عند تحميل الكومبوننت
+  useEffect(() => {
+    fetchUnreadCount();
+    // يمكنك إضافة interval لتحديث العدد كل فترة
+    const interval = setInterval(fetchUnreadCount, 30000); // كل 30 ثانية
+    return () => clearInterval(interval);
+  }, []);
 
- // إضافة useEffect لجلب الإشعارات عند اختيار تبويب الإشعارات
- useEffect(() => {
-   if (activeTab === "notifications") {
-     fetchNotifications();
-   }
- }, [activeTab]);
+  // إضافة useEffect لجلب الإشعارات عند اختيار تبويب الإشعارات
+  useEffect(() => {
+    if (activeTab === "notifications") {
+      fetchNotifications();
+    }
+  }, [activeTab]);
 
   // Fetch user orders
   const fetchUserOrders = async () => {
@@ -474,7 +475,6 @@ const Settings = () => {
           },
         }
       );
-      
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -789,8 +789,7 @@ const Settings = () => {
       return { strength: score, label: "Good", color: "bg-blue-500" };
     return { strength: score, label: "Strong", color: "bg-green-500" };
   };
-  
-  
+
   const fetchOrderDetails = async (orderId) => {
     setLoadingDetails(true);
     try {
@@ -1452,8 +1451,6 @@ const Settings = () => {
             </div>
           </div>
         );
-
-     
 
       case "orders":
         return (
@@ -2231,13 +2228,13 @@ const Settings = () => {
     }
   };
 
-   const navItem = (id, icon, label, description) => (
+  const navItem = (id, icon, label, description) => (
     <li
       onClick={() => setActiveTab(id)}
       className={`cursor-pointer ${activeTab === id ? "text-gray-300" : ""}`}
     >
       <div className="flex items-center gap-3 font-medium relative">
-        {icon} 
+        {icon}
         {label}
         {id === "notifications" && unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -2299,12 +2296,18 @@ const Settings = () => {
             "Language & Appearance",
             "Change language or switch to dark mode"
           )}
-          {/* {navItem(
-            "shipping",
-            <FaMapMarkerAlt />,
-            "Shipping Information",
-            "Update your delivery address and contact info"
-          )} */}
+          <li className="mt-6">
+            <Link
+              to="/loyalty-discount"
+              className="flex items-center gap-3 text-red-200 font-medium hover:text-white transition-colors duration-200"
+            >
+              <FaGift /> Loyalty Discount
+            </Link>
+            <p className="ml-7 text-red-200 text-xs">
+              View your loyalty level and active coupon
+            </p>
+          </li>
+
           {navItem(
             "orders",
             <FaClipboardList />,

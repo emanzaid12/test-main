@@ -105,8 +105,8 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    dispatch(setSearchTerm(searchTerm));
-    navigate("/filter-data");
+    if (searchTerm.trim() === "") return;
+    navigate(`/filter-data?search=${encodeURIComponent(searchTerm)}`);
   };
 
   const handleLogout = () => {

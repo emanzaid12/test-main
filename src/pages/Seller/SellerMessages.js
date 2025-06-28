@@ -1,188 +1,151 @@
-import React, { useState } from "react";
-import {
-  FaEnvelope,
-  FaPaperPlane,
-  FaInbox,
-  FaUserCircle,
-} from "react-icons/fa";
-
-const dummyMessages = [
-  {
-    id: 1,
-    name: "Fatou Lab",
-    email: "fatou@example.com",
-    avatar: "",
-    subject: "Need Webdesign Project For A Company",
-    content: "Dear Mr. Hossam,\nLorem ipsum dolor sit amet, consectetur adipiscing elit...",
-    attachments: ["Landing Page Concept.zip", "Fatou_Lab_Brandbook.pdf"],
-    read: false,
-  },
-  {
-    id: 2,
-    name: "Mina Adel",
-    email: "mina@example.com",
-    avatar: "",
-    subject: "Meeting Reminder",
-    content: "Don't forget the meeting at 10 AM tomorrow.",
-    attachments: [],
-    read: true,
-  },
-];
+import React, { useState, useEffect, useRef } from "react";
 
 const Messages = () => {
-  const [overallMessages, setOverallMessages] = useState(dummyMessages.length);
-  const [sentMessages, setSentMessages] = useState(0);
-  const [receivedMessages, setReceivedMessages] = useState(dummyMessages.length);
-  const [activeTab, setActiveTab] = useState("unread");
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [reply, setReply] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef(null);
 
-  const filteredMessages = dummyMessages.filter((msg) =>
-    activeTab === "unread" ? !msg.read : msg.read
-  );
+  // دالة لتحريك التمرير لأسفل تلقائياً عند وصول رسالة جديدة
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // دالة إرسال رسالة جديدة (هنا مجرد محاكاة، أضف الكود الخاص بالاتصال بالAPI هنا)
+  const sendMessage = () => {
+    if (input.trim() === "") return;
+
+    const newMessage = {
+      id: Date.now(),
+      senderId: "seller", // ممكن تعدل حسب الحاجة
+      message: input,
+      timestamp: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+    setInput("");
+  };
+
+  // عند الضغط على Enter في الحقل لإرسال الرسالة
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* Statistics */}
-      <div className="grid grid-cols-3 gap-6 mb-6">
-        <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4">
-          <FaEnvelope className="text-[#800000] text-3xl" />
-          <div>
-            <p className="text-gray-500 text-sm">Overall Messages</p>
-            <p className="text-xl font-bold text-[#800000]">{overallMessages}</p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-white p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <h1 className="text-center text-2xl font-bold text-[#800000] mb-6">
+          Messages
+        </h1>
 
-        <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4">
-          <FaPaperPlane className="text-[#800000] text-3xl" />
-          <div>
-            <p className="text-gray-500 text-sm">Sent Messages</p>
-            <p className="text-xl font-bold text-[#800000]">{sentMessages}</p>
+        {/* Messages Container */}
+        <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+          {/* Messages Area */}
+          <div className="h-96 p-4 overflow-y-auto bg-gray-50">
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="text-gray-400 text-4xl mb-2">💬</div>
+                  <p className="text-gray-500 text-lg">No messages yet</p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Start a new conversation
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${
+                      msg.senderId === "seller"
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-md transform transition duration-200 hover:scale-105 ${
+                        msg.senderId === "seller"
+                          ? "bg-[#800000] text-white rounded-br-sm"
+                          : "bg-white text-gray-800 border border-gray-200 rounded-bl-sm"
+                      }`}
+                    >
+                      <p className="text-sm leading-relaxed">{msg.message}</p>
+                      <div
+                        className={`text-xs mt-2 ${
+                          msg.senderId === "seller"
+                            ? "text-gray-200"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {new Date(msg.timestamp).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
           </div>
-        </div>
 
-        <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4">
-          <FaInbox className="text-[#800000] text-3xl" />
-          <div>
-            <p className="text-gray-500 text-sm">Received Messages</p>
-            <p className="text-xl font-bold text-[#800000]">{receivedMessages}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Messages Layout */}
-      <div className="flex gap-6">
-        {/* Left Sidebar */}
-        <div className="w-1/3 bg-white rounded-lg shadow-md">
-          <div className="p-4 border-b flex justify-between items-center">
-            <h2 className="text-[#800000] text-xl font-bold">Messages</h2>
-            <div className="flex border border-[#800000] rounded-full overflow-hidden">
+          {/* Input Area */}
+          <div className="border-t border-gray-200 bg-white p-4">
+            <div className="flex items-center space-x-3">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  placeholder="Type your message here..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full px-4 py-3 pl-12 rounded-full border border-gray-300 focus:border-[#800000] focus:ring-2 focus:ring-[#800000] focus:ring-opacity-20 outline-none transition-all duration-200"
+                />
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  ✏️
+                </div>
+              </div>
               <button
-                className={`px-4 py-2 text-sm font-semibold ${
-                  activeTab === "unread"
-                    ? "bg-[#800000] text-white"
-                    : "bg-white text-[#800000]"
+                onClick={sendMessage}
+                disabled={!input.trim()}
+                className={`px-6 py-3 rounded-full font-medium transition-all duration-200 transform hover:scale-105 ${
+                  input.trim()
+                    ? "bg-[#800000] text-white hover:bg-[#600000] shadow-lg"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
-                onClick={() => setActiveTab("unread")}
               >
-                Unread
-              </button>
-              <button
-                className={`px-4 py-2 text-sm font-semibold ${
-                  activeTab === "read"
-                    ? "bg-[#800000] text-white"
-                    : "bg-white text-[#800000]"
-                }`}
-                onClick={() => setActiveTab("read")}
-              >
-                Read
+                Send
               </button>
             </div>
           </div>
-
-          {/* Sidebar Messages */}
-          <div className="p-4 space-y-3">
-            {filteredMessages.length === 0 ? (
-              <p className="text-gray-500 text-center">No messages</p>
-            ) : (
-              filteredMessages.map((msg) => (
-                <div
-                  key={msg.id}
-                  onClick={() => setSelectedMessage(msg)}
-                  className="flex items-center p-3 cursor-pointer hover:bg-gray-100 rounded"
-                >
-                  <FaUserCircle className="text-3xl text-gray-500 mr-3" />
-                  <div>
-                    <p className="font-semibold">{msg.name}</p>
-                    <p className="text-sm text-gray-500">{msg.subject}</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 bg-white rounded-lg shadow-md p-6">
-          {selectedMessage ? (
-            <>
-              <div className="flex items-center space-x-4">
-                <FaUserCircle className="text-4xl text-gray-600" />
-                <div>
-                  <h3 className="text-lg font-bold">{selectedMessage.name}</h3>
-                  <p className="text-sm text-gray-500">{selectedMessage.email}</p>
-                </div>
-              </div>
-              <hr className="my-4" />
-              <h4 className="text-lg font-bold mb-2">{selectedMessage.subject}</h4>
-              <p className="whitespace-pre-line text-gray-700">
-                {selectedMessage.content}
-              </p>
-
-              {/* Attachments */}
-              {selectedMessage.attachments.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  {selectedMessage.attachments.map((file, i) => (
-                    <div
-                      key={i}
-                      className="p-3 bg-gray-100 rounded flex items-center justify-between"
-                    >
-                      <span>{file}</span>
-                      <button className="text-sm text-[#800000] font-semibold hover:underline">
-                        Download
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Reply Box */}
-              <div className="mt-6">
-                <textarea
-                  value={reply}
-                  onChange={(e) => setReply(e.target.value)}
-                  placeholder="Write your message..."
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#800000]"
-                />
-                <div className="text-right mt-3">
-                  <button
-                    className="bg-[#800000] hover:bg-[#a94444] text-white px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105"
-                    onClick={() => {
-                      if (reply.trim()) {
-                        alert("Message sent!");
-                        setSentMessages(sentMessages + 1);
-                        setReply("");
-                      }
-                    }}
-                  >
-                    Send
-                  </button>
-                </div>
-              </div>
-            </>
-          ) : (
-            <p className="text-center text-gray-500">Select a message to view</p>
-          )}
+        {/* Stats or Info Section */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg shadow-md p-4 text-center border border-gray-200">
+            <div className="text-2xl font-bold text-[#800000]">
+              {messages.length}
+            </div>
+            <div className="text-gray-600 text-sm">Total Messages</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-4 text-center border border-gray-200">
+            <div className="text-2xl font-bold text-green-600">Online</div>
+            <div className="text-gray-600 text-sm">Connection Status</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-4 text-center border border-gray-200">
+            <div className="text-2xl font-bold text-blue-600">
+              {messages.filter((m) => m.senderId === "seller").length}
+            </div>
+            <div className="text-gray-600 text-sm">My Messages</div>
+          </div>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import {
   FaStore,
   FaUserPlus,
 } from "react-icons/fa";
+import { FaCog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import CountUp from "react-countup";
 import { Bar } from "react-chartjs-2";
@@ -315,6 +316,12 @@ const Dashboard = () => {
       route: "/admin/messages",
     },
     {
+      icon: <FaCog />,
+      title: "Platform Settings",
+      subtitle: "Manage discounts and shipping settings",
+      route: "/admin/platform-settings",
+    },
+    {
       icon: <FaStore />,
       title: "Store Update Requests",
       subtitle: "Review and manage store update requests",
@@ -325,8 +332,7 @@ const Dashboard = () => {
       title: "Add New Admin",
       subtitle: "Create new administrator accounts",
       route: "/admin/add-admin",
-    }
-    ,
+    },
     {
       icon: <FaUsers />,
       title: "All Admins",

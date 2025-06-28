@@ -61,6 +61,9 @@ import AdminMessages from "./pages/Admin/AdminMessages";
 import AddNewAdmin from "./pages/Admin/AddNewAdmin";
 import StoreUpdateRequests from"./pages/Admin/StoreUpdateRequests";
 import AllAdmin from"./pages/Admin/AllAdmin";
+import PlatformSettings from"./pages/Admin/PlatformSettings";
+import MyLoyaltyDiscount from "./pages/MyLoyaltyDiscount";
+
 function App() {
   const { i18n } = useTranslation();
 
@@ -146,7 +149,7 @@ function App() {
               />
 
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/admin/alladmin" element={<AllAdmin/>} />
+              <Route path="/admin/alladmin" element={<AllAdmin />} />
 
               <Route path="/admin/products" element={<ManageProducts />} />
               <Route path="/admin/orders" element={<ManageOrders />} />
@@ -164,6 +167,11 @@ function App() {
                 element={<StoreUpdateRequests />}
               />
               <Route path="/admin/add-admin" element={<AddNewAdmin />} />
+              <Route
+                path="/admin/platform-settings"
+                element={<PlatformSettings />}
+              />
+              <Route path="/loyalty-discount" element={<MyLoyaltyDiscount />} />
             </Routes>
           </div>
           <Footer />
