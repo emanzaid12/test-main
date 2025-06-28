@@ -2346,7 +2346,17 @@ const Settings = () => {
             "Notifications",
             "View alerts and updates"
           )}
-
+          <li className="mt-6">
+            <Link
+              to="/loyalty-discount"
+              className="flex items-center gap-3 text-red-200 font-medium hover:text-white transition-colors duration-200"
+            >
+              <FaGift /> Loyalty Discount
+            </Link>
+            <p className="ml-7 text-red-200 text-xs">
+              View your loyalty level and active coupon
+            </p>
+          </li>
           {/* Logout */}
           <li className="mt-6">
             <div
